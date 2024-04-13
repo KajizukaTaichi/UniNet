@@ -11,7 +11,11 @@
     <p id="name"></p>
     <div id="messages">
         {% for message in messages %}
-            <p>{{ message.username }}: {{ message.message }}</p>
+            <p id="message-{{ loop.index }}">{{ message.username }}: {{ message.message }}
+                {% if message.username == username %}
+                    <button onclick="deleteMessage('{{ message.message }}')">Delete</button>
+                {% endif %}
+            </p>
         {% endfor %}
     </div>
     <input type="text" id="messageInput" placeholder="教室のゆかいな仲間たちがきっと応えてくれます">
@@ -36,6 +40,21 @@
             socket.emit('message', message);
             messageInput.value = '';
         }
+
+        function deleteMessage(messageContent) {
+            if (confirm("マジで削除しますか？")) {
+                socket.emit('delete_message', messageContent);
+            }
+        }
+
+        socket.on('message_deleted', function(messageContent) {
+            var messageElements = document.querySelectorAll('p');
+            messageElements.forEach(function(element) {
+                if (element.textContent.includes(messageContent)) {
+                    element.remove();
+                }
+            });
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             var textInput = document.getElementById('messageInput');

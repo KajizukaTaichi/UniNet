@@ -29,6 +29,17 @@ def load_messages():
         pass
     return messages
 
+def delete_message(message_content):
+    try:
+        with open("messages.txt", "r") as f:
+            lines = f.readlines()
+        with open("messages.txt", "w") as f:
+            for line in lines:
+                if json.loads(line.strip())['message'] != message_content:
+                    f.write(line)
+    except FileNotFoundError:
+        pass
+
 @socketio.on("connect")
 @app.route('/')
 @auth.login_required
@@ -42,6 +53,12 @@ def handle_message(message):
     print('Received message:', message)
     save_message({'username': auth.username(), 'message': message})
     socketio.emit('message', f'{auth.username()}: {message}', namespace="/")
+
+@socketio.on('delete_message')
+@auth.login_required
+def handle_delete_message(message):
+    delete_message(message)
+    socketio.emit('message_deleted', message, namespace="/")
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
