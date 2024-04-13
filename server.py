@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 import json
+from users import users
 from flask_socketio import SocketIO
 from flask_httpauth import HTTPBasicAuth
 
@@ -7,10 +8,6 @@ app = Flask("UniNet")
 app.config['SECRET_KEY'] = 'secret'
 socketio = SocketIO(app, cors_allowed_origins="*")
 auth = HTTPBasicAuth()
-
-users = {
-    "梶塚太智": "Rust2021",
-}
 
 @auth.get_password
 def get_pw(username):

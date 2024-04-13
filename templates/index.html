@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>UniNet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
 </head>
 <body>
@@ -13,15 +14,15 @@
             <p>{{ message.username }}: {{ message.message }}</p>
         {% endfor %}
     </div>
-    <input type="text" id="messageInput" placeholder="Type your message...">
-    <button onclick="sendMessage()">Send</button>
+    <input type="text" id="messageInput" placeholder="教室のゆかいな仲間たちがきっと応えてくれます">
+    <button onclick="sendMessage()">✈ 送信</button>
 
     <script>
         var socket = io.connect('http://127.0.0.1:5000');
 
         socket.on('connect', function() {
             var userName = document.getElementById("name");
-            userName.innerHTML = 'Logged in as: ' + '{{ username }}'
+            userName.innerHTML = '{{ username }} としてログインしています'
         });
 
         socket.on('message', function(message) {
@@ -35,36 +36,48 @@
             socket.emit('message', message);
             messageInput.value = '';
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var textInput = document.getElementById('messageInput');
+            textInput.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.keyCode === 13) { // Ctrl+Enter
+                event.preventDefault(); // デフォルトの動作をキャンセル
+                sendMessage();
+                }
+            });
+        });
     </script>
 
     <style>
         body {
-            background: linear-gradient(to bottom, #abd4f0, #157bd4);
-            height: 100vh;
+            margin: 10px;
+        }
+
+        h1 {
+            background-color: cadetblue;
+            border-radius: 10px;
+            padding: 10px;
         }
 
         #messages {
-            padding: 5px;
-            background: linear-gradient(to bottom, #f5f7f8, #b8b8b8);
+            padding-left: 15px;
+            padding-top: 7px;
+            padding-bottom: 7px;
             border-radius: 10px;
             margin-bottom: 10px;
-        }
-
-        #name {
-            padding: 5px;
-            background: linear-gradient(to bottom, #f5f7f8, #b8b8b8);
-            border-radius: 10px;
-            margin-bottom: 10px;
+            overflow: scroll;
+            border-style: solid;
+            border-color: cadetblue;
+            height: 450px;
         }
 
         input {
-            border-radius: 10px;
-            width: 95%;
-        }
-
-        button {
-            border-radius: 10px;
+            width: 94%;
         }
     </style>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 </body>
 </html>
