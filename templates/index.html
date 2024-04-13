@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UniNet</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+</head>
+<body>
+
+    <h1>UniNet - 電気通信大学プログラミング教室</h1>
+    <p id="name"></p>
+    <div id="messages">
+        {% for message in messages %}
+            <p>{{ message.username }}: {{ message.message }}</p>
+        {% endfor %}
+    </div>
+    <input type="text" id="messageInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        var socket = io.connect('http://127.0.0.1:5000');
+
+        socket.on('connect', function() {
+            var userName = document.getElementById("name");
+            userName.innerHTML = 'Logged in as: ' + '{{ username }}'
+        });
+
+        socket.on('message', function(message) {
+            var messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += '<p>' + message + '</p>';
+        });
+
+        function sendMessage() {
+            var messageInput = document.getElementById('messageInput');
+            var message = messageInput.value;
+            socket.emit('message', message);
+            messageInput.value = '';
+        }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(to bottom, #abd4f0, #157bd4);
+            height: 100vh;
+        }
+
+        #messages {
+            padding: 5px;
+            background: linear-gradient(to bottom, #f5f7f8, #b8b8b8);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        #name {
+            padding: 5px;
+            background: linear-gradient(to bottom, #f5f7f8, #b8b8b8);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            border-radius: 10px;
+            width: 95%;
+        }
+
+        button {
+            border-radius: 10px;
+        }
+    </style>
+</body>
+</html>
